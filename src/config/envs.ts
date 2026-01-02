@@ -3,10 +3,17 @@ import * as joi from 'joi';
 
 interface EnvVars {
         PORT: number;
-
         
         NATS_SERVERS: string[];
         
+        // MongoDB - Opción 1: Variables separadas (RECOMENDADO para Docker)
+        MONGO_USER: string;
+        MONGO_PASSWORD: string;
+        MONGO_DB_NAME: string;
+        MONGO_HOST: string;
+        
+        // MongoDB - Opción 2: URI completa (para conexiones externas)
+        // MONGO_URI: string;
 }
 
 const envsSchema = joi.object({
@@ -14,6 +21,14 @@ const envsSchema = joi.object({
 
     NATS_SERVERS: joi.array().items(joi.string()).required(),///validar nats servers
    
+    // MongoDB - Opción 1: Variables separadas
+    MONGO_USER: joi.string().required(),
+    MONGO_PASSWORD: joi.string().required(),
+    MONGO_DB_NAME: joi.string().required(),
+    MONGO_HOST: joi.string().required(),
+    
+    // MongoDB - Opción 2: URI completa (comentado)
+    // MONGO_URI: joi.string().required(),
 })
 .unknown(true);
 
@@ -36,4 +51,12 @@ export const envs= {
     
     natsServers: envVars.NATS_SERVERS,
    
+    // MongoDB - Opción 1: Variables separadas
+    mongoUser: envVars.MONGO_USER,
+    mongoPassword: envVars.MONGO_PASSWORD,
+    mongoDbName: envVars.MONGO_DB_NAME,
+    mongoHost: envVars.MONGO_HOST,
+    
+    // MongoDB - Opción 2: URI completa (comentado)
+    // mongoUri: envVars.MONGO_URI,
 }

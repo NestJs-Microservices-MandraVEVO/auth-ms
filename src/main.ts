@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { envs } from './config/envs';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
+import mongoose from 'mongoose';
 
 async function bootstrap() {
 
@@ -21,6 +22,14 @@ async function bootstrap() {
     whitelist: true,
     forbidNonWhitelisted: true,
   }));
+
+  mongoose.connection.on('connected', () => {
+  console.log('🟢 MongoDB connected');
+  });
+
+  mongoose.connection.on('error', (err) => {
+  console.error('🔴 MongoDB connection error:', err);
+  });
 
   await app.listen();
   logger.log(`Auth-Microservice running on port ${envs.port}`);
