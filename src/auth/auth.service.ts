@@ -5,7 +5,7 @@ import { Model } from 'mongoose';
 import { User } from './schemas/user.schema';
 import { RpcException } from '@nestjs/microservices';
 import { RegisterUserDto } from './dto';
-import { retry } from 'rxjs';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService implements OnModuleInit {
@@ -28,10 +28,7 @@ export class AuthService implements OnModuleInit {
         try {
             
             const user = await this.userModel.findOne({
-                where:{
-                    email: email,
-                },
-
+                email: email
             });
 
             if(user){
@@ -44,12 +41,17 @@ export class AuthService implements OnModuleInit {
             const newUser = await this.userModel.create({
                 email: email,
                 name: name,
-                password: password,
+                password: bcrypt.hashSync(password, 10),
             });
 
+            const { _id, email: userEmail, name: userName } = newUser.toJSON();
 
             return {
-                user: newUser,
+                user: {
+                    id: _id,
+                    email: userEmail,
+                    name: userName
+                },
                 token: 'fake-jwt-token'
             }
 
