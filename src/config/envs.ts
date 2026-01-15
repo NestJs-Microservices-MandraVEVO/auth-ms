@@ -5,6 +5,8 @@ interface EnvVars {
         PORT: number;
         
         NATS_SERVERS: string[];
+
+        JWT_SECRET: string;
         
         // MongoDB - Opción 1: Variables separadas (RECOMENDADO para Docker)
         MONGO_USER: string;
@@ -18,8 +20,10 @@ interface EnvVars {
 
 const envsSchema = joi.object({
     PORT: joi.number().required(),
+    
 
     NATS_SERVERS: joi.array().items(joi.string()).required(),///validar nats servers
+    JWT_SECRET: joi.string().required(),//validar jwt secret
    
     // MongoDB - Opción 1: Variables separadas
     MONGO_USER: joi.string().required(),
@@ -56,6 +60,7 @@ export const envs= {
     mongoPassword: envVars.MONGO_PASSWORD,
     mongoDbName: envVars.MONGO_DB_NAME,
     mongoHost: envVars.MONGO_HOST,
+    jwtSecret: envVars.JWT_SECRET,
     
     // MongoDB - Opción 2: URI completa (comentado)
     // mongoUri: envVars.MONGO_URI,
