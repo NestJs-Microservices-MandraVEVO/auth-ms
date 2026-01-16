@@ -8,6 +8,7 @@ import { LoginUserDto, RegisterUserDto } from './dto';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { JwtPayload } from './dto/interfaces/jwt-payload.interface';
+import { envs } from 'src/config/envs';
 
 @Injectable()
 export class AuthService implements OnModuleInit {
@@ -29,6 +30,29 @@ export class AuthService implements OnModuleInit {
 
     async signJWT(payload: JwtPayload){
         return this.jwtService.sign(payload)
+    }
+
+
+    async verifyToken(token: string ){
+        try {
+        const {sub, iat, exp, ...user} = this.jwtService.verify(token,{
+            secret: envs.jwtSecret,
+
+        });
+
+        return{
+            user: user,
+            token: await this.signJWT(user),
+        }
+
+
+        } catch (error) {
+            console.log(error);
+            throw new RpcException({
+                status: 401,
+                message: 'Invalid token'
+            });
+        }
     }
     // Métodos de ejemplo para trabajar con MongoDB
     async registerUser(registerUserDto: RegisterUserDto){
@@ -120,4 +144,6 @@ export class AuthService implements OnModuleInit {
             })
         }
     }
+
+
 }
