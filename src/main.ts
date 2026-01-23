@@ -33,5 +33,7 @@ async function bootstrap() {
 
   await app.listen();
   logger.log(`Auth-Microservice running on port ${envs.port}`);
+
+  console.log('auth-ms testing log')
 }
 bootstrap();
